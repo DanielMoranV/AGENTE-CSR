@@ -1,0 +1,82 @@
+# ==============================================================================
+# .gitignore — AGENTE-CSR (Asistente Analítico Institucional)
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. SECRETOS Y CREDENCIALES (CRÍTICO: Protección de credenciales institucionales)
+# ------------------------------------------------------------------------------
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.cert
+
+# ------------------------------------------------------------------------------
+# 2. ENTORNO VIRTUAL Y DEPENDENCIAS PYTHON
+# ------------------------------------------------------------------------------
+.venv/
+venv/
+env/
+ENV/
+build/
+dist/
+*.egg-info/
+
+# ------------------------------------------------------------------------------
+# 3. CACHÉ Y ARCHIVOS COMPILADOS
+# ------------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+*.coverage.*
+
+# ------------------------------------------------------------------------------
+# 4. REGISTROS Y AUDITORÍA LOCAL
+# ------------------------------------------------------------------------------
+# Conservar carpeta logs/ pero omitir archivos de log de auditoría
+logs/*
+!logs/.gitkeep
+
+# ------------------------------------------------------------------------------
+# 5. WORKSPACE, TEMPORALES Y REPORTES GENERADOS (Ley N.º 29733 / D.S. N.º 016-2024-JUS)
+# ------------------------------------------------------------------------------
+# Conservar estructura de carpetas mediante .gitkeep sin versionar documentos
+workspace/temporales/*
+!workspace/temporales/.gitkeep
+workspace/resultados/excel/*
+!workspace/resultados/excel/.gitkeep
+workspace/resultados/pdf/*
+!workspace/resultados/pdf/.gitkeep
+workspace/resultados/word/*
+!workspace/resultados/word/.gitkeep
+workspace/resultados/docx/*
+!workspace/resultados/docx/.gitkeep
+workspace/resultados/csv/*
+!workspace/resultados/csv/.gitkeep
+
+# Exclusión general de formatos de reporte y archivos binarios DBF
+*.xlsx
+*.docx
+*.pdf
+*.csv
+*.dbf
+*.cdx
+*.fpt
+
+# ------------------------------------------------------------------------------
+# 6. CONFIGURACIONES DE IDE Y SISTEMA OPERATIVO
+# ------------------------------------------------------------------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store

@@ -1,0 +1,81 @@
+{
+  "version": "2.0.0",
+  "politica_general": "Principio de Menor Privilegio y Cero Escritura en Datos Institucionales",
+  "herramientas": {
+    "consultar_facturacion": {
+      "habilitada": true,
+      "solo_lectura": true,
+      "descripcion": "Consulta analítica consolidada de facturación por aseguradora y periodos."
+    },
+    "consultar_admisiones": {
+      "habilitada": true,
+      "solo_lectura": true,
+      "descripcion": "Conteo consolidado de atenciones y pacientes por especialidad médica."
+    },
+    "consultar_laboratorio": {
+      "habilitada": true,
+      "solo_lectura": true,
+      "descripcion": "Conteo consolidado de determinaciones y pruebas demandadas en SISLAB."
+    },
+    "consultar_farmacia": {
+      "habilitada": true,
+      "solo_lectura": true,
+      "descripcion": "Consulta analítica consolidada de órdenes de compra, proveedores y adquisiciones de farmacia."
+    },
+    "consultar_dbf_directo": {
+      "habilitada": true,
+      "solo_lectura": true,
+      "descripcion": "Lectura directa no invasiva en modo binario 'rb' de archivos DBF de Sisclin y Sislab."
+    },
+    "generar_excel": {
+      "habilitada": true,
+      "solo_lectura": false,
+      "descripcion": "Exportación de libros .xlsx con paleta corporativa y gráficos en workspace/resultados/excel/."
+    },
+    "generar_word": {
+      "habilitada": true,
+      "solo_lectura": false,
+      "descripcion": "Exportación de informes ejecutivos .docx en workspace/resultados/word/."
+    },
+    "generar_pdf": {
+      "habilitada": true,
+      "solo_lectura": false,
+      "descripcion": "Exportación de documentos .pdf foliados en workspace/resultados/pdf/."
+    },
+    "prediccion_ml_demanda": {
+      "habilitada": false,
+      "tipo_bloqueo": "HERRAMIENTA_INEXISTENTE",
+      "motivo": "Esta funcionalidad no está implementada en las herramientas disponibles. No se dispone de un modelo predictivo ni de series temporales validadas estadísticamente. No se inventarán predicciones."
+    },
+    "enviar_email": {
+      "habilitada": false,
+      "tipo_bloqueo": "HERRAMIENTA_INEXISTENTE",
+      "motivo": "El envío de correo electrónico no está configurado ni autorizado en el entorno actual. No se cuenta con una pasarela SMTP institucional auditada."
+    },
+    "modificar_postgresql": {
+      "habilitada": false,
+      "tipo_bloqueo": "PROHIBICION_SEGURIDAD",
+      "motivo": "No tengo autorización para modificar datos institucionales en PostgreSQL. La política de AGENTE-CSR exige acceso estricto de solo lectura."
+    },
+    "modificar_dbf": {
+      "habilitada": false,
+      "tipo_bloqueo": "PROHIBICION_SEGURIDAD",
+      "motivo": "Está terminantemente prohibido modificar o sobreescribir archivos DBF originales de SISCLIN o SISLAB. El acceso a las carpetas de red es exclusivamente en modo binario de solo lectura (rb)."
+    },
+    "escribir_fuera_workspace": {
+      "habilitada": false,
+      "tipo_bloqueo": "PROHIBICION_SEGURIDAD",
+      "motivo": "Acceso denegado: El agente únicamente tiene permitido escribir dentro de 'C:\\AGENTE-CSR\\workspace\\'. No se permite modificar instrucciones, código fuente ni archivos del sistema operativo."
+    },
+    "consultar_datos_personales": {
+      "habilitada": false,
+      "tipo_bloqueo": "PROHIBICION_SEGURIDAD",
+      "motivo": "Acceso denegado: En estricto cumplimiento de la Ley N.º 29733 y el D.S. N.º 016-2024-JUS, las herramientas analíticas generales no exponen datos personales individualizados (DNI, nombres o historias clínicas). Los reportes gerenciales deben ser agregados y anonimizados."
+    },
+    "ejecutar_python_arbitrario": {
+      "habilitada": false,
+      "tipo_bloqueo": "PROHIBICION_SEGURIDAD",
+      "motivo": "El agente no tiene autorización para generar ni ejecutar scripts Python arbitrarios no certificados en el entorno de Gerencia."
+    }
+  }
+}

@@ -1,0 +1,23 @@
+# Manipulación y análisis de datos
+pandas>=2.1.0
+numpy>=1.26.0
+
+# Conexión a Base de Datos (Solo lectura)
+sqlalchemy>=2.0.30
+psycopg2-binary>=2.9.9
+
+# Generación de Reportes Ejecutivos
+openpyxl>=3.1.2
+xlsxwriter>=3.2.0
+python-docx>=1.1.0
+reportlab>=4.2.0
+matplotlib>=3.8.0
+
+# Configuración y utilidades
+python-dotenv>=1.0.1
+pydantic>=2.7.0
+pydantic-settings>=2.2.0
+loguru>=0.7.2
+
+# Lector DBF
+dbfread>=2.0.7
