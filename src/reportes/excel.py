@@ -12,6 +12,8 @@ import openpyxl
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
 from openpyxl.chart import BarChart, Reference
+from openpyxl.chart.series import SeriesLabel
+from openpyxl.chart.data_source import AxDataSource, StrRef, NumRef, StrData, StrVal, NumData, NumVal
 
 from src.security.permissions import validar_ruta_escritura, sanitizar_valor_excel, RESULTADOS_DIR
 from src.security.audit import registrar_evento_auditoria
@@ -187,26 +189,69 @@ def generar_reporte_excel(
 
     # 6. Gráfico opcional
     if crear_grafico and grafico_config and len(df) > 0:
+        tipo_grafico = grafico_config.get("tipo", "col")
         chart = BarChart()
-        chart.type = "col"
+        chart.type = tipo_grafico
         chart.style = 10
         chart.title = grafico_config.get("titulo", "Comparativo")
         chart.height = 14
         chart.width = 22
 
+        # Configuración de orientación de ejes para evitar solapamiento
+        if tipo_grafico == "col":
+            chart.x_axis.axPos = "b"
+            chart.y_axis.axPos = "l"
+        else:
+            chart.x_axis.axPos = "l"
+            chart.y_axis.axPos = "b"
+
         cat_col = grafico_config.get("categoria", columnas[0])
         cat_idx = columnas.index(cat_col) + 1
+        cat_col_letter = get_column_letter(cat_idx)
         val_cols = grafico_config.get("valores", [columnas[1]])
 
-        for v_col in val_cols:
+        fila_fin_datos = fila_inicio_tabla + len(df)
+
+        # Configurar referencia absoluta y caché de categorías (eje X)
+        cat_ref_str = f"'{ws.title}'!${cat_col_letter}${fila_inicio_tabla + 1}:${cat_col_letter}${fila_fin_datos}"
+        es_cat_num = pd.api.types.is_numeric_dtype(df[cat_col])
+        if es_cat_num:
+            cat_cache = NumData(pt=[NumVal(idx=i, v=float(df[cat_col].iloc[i])) for i in range(len(df))])
+            cat_source = AxDataSource(numRef=NumRef(f=cat_ref_str, numCache=cat_cache))
+        else:
+            cat_cache = StrData(pt=[StrVal(idx=i, v=str(df[cat_col].iloc[i])) for i in range(len(df))])
+            cat_source = AxDataSource(strRef=StrRef(f=cat_ref_str, strCache=cat_cache))
+
+        # Agregar series de datos numéricos con referencias absolutas y caché
+        for s_idx, v_col in enumerate(val_cols):
             if v_col in columnas:
                 v_idx = columnas.index(v_col) + 1
-                data_ref = Reference(ws, min_col=v_idx, min_row=fila_inicio_tabla, max_row=fila_actual - (2 if incluir_totales else 1))
+                v_col_letter = get_column_letter(v_idx)
+
+                data_ref = Reference(ws, min_col=v_idx, min_row=fila_inicio_tabla, max_row=fila_fin_datos)
                 chart.add_data(data_ref, titles_from_data=True)
 
-        cats_ref = Reference(ws, min_col=cat_idx, min_row=fila_inicio_tabla + 1, max_row=fila_actual - (2 if incluir_totales else 1))
-        chart.set_categories(cats_ref)
+                s = chart.series[-1]
+                s.idx = s_idx
+                s.order = s_idx
 
+                # 1. Referencia absoluta del título con caché de texto
+                header_val = ws.cell(row=fila_inicio_tabla, column=v_idx).value
+                s.title.strRef.f = f"'{ws.title}'!${v_col_letter}${fila_inicio_tabla}"
+                s.title.strRef.strCache = StrData(pt=[StrVal(idx=0, v=str(header_val))])
+
+                # 2. Caché de valores numéricos para renderizado instantáneo
+                val_cache = NumData(pt=[
+                    NumVal(idx=i, v=float(df[v_col].iloc[i]) if pd.notnull(df[v_col].iloc[i]) else 0.0)
+                    for i in range(len(df))
+                ])
+                s.val.numRef.f = f"'{ws.title}'!${v_col_letter}${fila_inicio_tabla + 1}:${v_col_letter}${fila_fin_datos}"
+                s.val.numRef.numCache = val_cache
+
+                # 3. Asignación explícita de categorías (eje X)
+                s.cat = cat_source
+
+        # Posicionamiento a la derecha de la tabla con margen de 2 columnas
         chart_pos = f"{get_column_letter(len(columnas) + 2)}4"
         ws.add_chart(chart, chart_pos)
 
